@@ -7,19 +7,21 @@ import Workbook from './workbook';
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { files: [], data: {} }
+        this.state = { files: [], data: {}, loaded: false}
     }
 
     onDrop(files) {
         if (files.length > 0) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const content = reader.result;
-                const data = xlsx.read(content, {type: 'binary'});
-                this.setState({data: data});
-            }
-            reader.readAsBinaryString(files[0]);
-            this.setState({ files: files })
+            this.setState({loaded: false, data: {}}, () => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const content = reader.result;
+                    const data = xlsx.read(content, {type: 'binary'});
+                    this.setState({loaded: true, data: data});
+                }
+                reader.readAsBinaryString(files[0]);
+                this.setState({ files: files })
+            })
         }
     }
 
@@ -41,6 +43,7 @@ class App extends React.Component {
                 { this.state.files.map(f => <li key={f.name}>{f.name} - {f.size} bytes</li>) }
                 </ul>
             </div>
+            { !this.state.loaded && (<div><p>Loading...</p></div>)}
             <Workbook src={this.state.data} />
         </div>
         );

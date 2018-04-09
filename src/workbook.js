@@ -1,24 +1,62 @@
 import React from 'react';
 
+const numberToAlpha = (num) => {
+    let ret = '';
+    let remain = num;
+    while(remain >= 1) {
+        const ch = remain % 26;
+        remain = remain / 26;
+        ret = String.fromCharCode('A'.charCodeAt(0) - 1 + ch) + ret;
+    }
+    return ret;
+}
+
+const alphToNumber = (atoz) => {
+    let ret = 0;
+    for (var i = 0; i < atoz.length; i++) {
+        if (i > 0) {
+            ret *= 26;
+        }
+        ret += atoz.charCodeAt(i) - 'A'.charCodeAt(0) + 1;
+    }
+    return ret;
+}
+
+const refToNumber = (ref) => {
+    const [head, tail] = ref.split(":");
+    const headTokens = head.match(/[A-Z]+|[0-9]+/g);
+    const tailTokens = tail.match(/[A-Z]+|[0-9]+/g);
+    return {
+        head: {c: alphToNumber(headTokens[0]), r: Number(headTokens[1]), code: head},
+        tail: {c: alphToNumber(tailTokens[0]), r: Number(tailTokens[1]), code: tail}
+    }
+}
+
 const sheetToObjects = (sheet) => {
-    const [head, tail] = sheet['!ref'].split(":");
-    const headCode = head.charCodeAt(0);
-    const tailCode = tail.charCodeAt(0);
-    const startRowNum = Number(head.substring(1));
-    const height = Number(tail.substring(1)) - startRowNum;
+    //console.debug(sheet);
+    const {head, tail} = refToNumber(sheet['!ref']);
+    console.debug("Workbook Sheet ref =", head, tail);
+    const headCode = head.c;
+    const tailCode = tail.c;
+    const startRowNum = head.r;
+    const height = tail.r - startRowNum + 1;
 
     let columns = [];
     for (var i = headCode; i <= tailCode; i++) {
-        const key = String.fromCharCode(i) + startRowNum;
-        columns.push(sheet[key].v);
+        const key = numberToAlpha(i) + startRowNum;
+        if (key in sheet) {
+            columns.push(sheet[key].v);
+        } else {
+            columns.push("");
+        }
     }
-    //console.log(columns);
+    console.debug("Workbook Sheet columns=", columns);
 
     let matrix = [];
     for (var j = startRowNum + 1; j <= startRowNum + height; j++) {
         let row = [];
         for (var k = headCode; k <= tailCode; k++) {
-            const key = String.fromCharCode(k) + j;
+            const key = numberToAlpha(k) + j;
             if (key in sheet) {
                 row.push(sheet[key].v);
             } else {
