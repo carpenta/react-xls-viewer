@@ -35,7 +35,7 @@ const refToNumber = (ref) => {
 const sheetToObjects = (sheet) => {
     //console.debug(sheet);
     const {head, tail} = refToNumber(sheet['!ref']);
-    console.debug("Workbook Sheet ref =", head, tail);
+    //console.debug("Workbook Sheet ref =", head, tail);
     const headCode = head.c;
     const tailCode = tail.c;
     const startRowNum = head.r;
@@ -50,7 +50,7 @@ const sheetToObjects = (sheet) => {
             columns.push("");
         }
     }
-    console.debug("Workbook Sheet columns=", columns);
+    //console.debug("Workbook Sheet columns=", columns);
 
     let matrix = [];
     for (var j = startRowNum + 1; j <= startRowNum + height; j++) {

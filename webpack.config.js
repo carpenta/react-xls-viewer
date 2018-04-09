@@ -1,11 +1,12 @@
 var path = require('path');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+var HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports={
-    cache: true,
     entry: './src/index.js',
     output: {
-        filename: 'bundle.js'
+        filename: '[name].bundle.js',
+        chunkFilename: '[name].bundle.js'
     },
     module: {
         rules: [
@@ -16,15 +17,11 @@ module.exports={
             }
         ]
     },
-    optimization: {
-        minimizer: [new UglifyJsPlugin({
-            cache: true,
-            parallel: true,
-            sourceMap: true,
-            uglifyOptions: {
-                compress: false,
-                mangle: false
-            }
-        })],
-    }
+    plugins: [
+        new HTMLWebpackPlugin({
+            title: 'carpenta playground',
+            template: './src/index.html'
+        }),
+    ],
+    devtool: "source-map"
 }
