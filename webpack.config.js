@@ -3,10 +3,14 @@ var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 var HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports={
-    entry: './src/index.js',
+    mode: 'development',
+    entry: {
+        vendor: ['babel-polyfill', 'react', 'react-dom', 'xlsx'],
+        main: './src/index.js',
+    },
     output: {
-        filename: '[name].bundle.js',
-        chunkFilename: '[name].bundle.js'
+        filename: '[name].[hash].bundle.js',
+        chunkFilename: '[name].[hash].bundle.js'
     },
     module: {
         rules: [
@@ -23,5 +27,17 @@ module.exports={
             template: './src/index.html'
         }),
     ],
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    chunks: 'initial',
+                    test: 'vendor',
+                    name: 'vendor',
+                    enforce: true
+                }
+            }
+        }
+    },
     devtool: "source-map"
 }

@@ -12,15 +12,13 @@ class App extends React.Component {
 
     onDrop(files) {
         if (files.length > 0) {
-            this.setState({loaded: false, data: {}}, () => {
+            this.setState({loaded: false, data: {}, files: files}, () => {
                 const reader = new FileReader();
-                reader.onload = () => {
-                    const content = reader.result;
-                    const data = xlsx.read(content, {type: 'binary'});
-                    this.setState({loaded: true, data: data});
-                }
+                reader.onload = () => this.setState({
+                    loaded: true, 
+                    data: xlsx.read(reader.result, {type: 'binary'})
+                });
                 reader.readAsBinaryString(files[0]);
-                this.setState({ files: files })
             })
         }
     }
@@ -39,6 +37,7 @@ class App extends React.Component {
                 </Dropzone>
             </div>
             <div>
+                <h3>File list</h3>
                 <ul>
                 { this.state.files.map(f => <li key={f.name}>{f.name} - {f.size} bytes</li>) }
                 </ul>
