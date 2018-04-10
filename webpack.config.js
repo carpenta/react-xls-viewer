@@ -1,9 +1,7 @@
-var path = require('path');
-var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 var HTMLWebpackPlugin = require('html-webpack-plugin');
 
-module.exports={
-    mode: 'development',
+module.exports = {
+    mode: process.env.WEBPACK_MODE || 'development',
     entry: {
         vendor: ['babel-polyfill', 'react', 'react-dom', 'xlsx'],
         main: './src/index.js',
